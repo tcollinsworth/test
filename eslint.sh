@@ -1,0 +1,1 @@
+node_modules/eslint/bin/eslint.js . --ext=js --ignore-pattern '**/__tests__' --ignore-pattern '**/migrations/**' --ignore-pattern '**/seeders/**' --ignore-pattern '**/public/api-docs' --ignore-path .gitignore --fix

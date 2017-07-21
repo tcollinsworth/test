@@ -1,0 +1,37 @@
+{
+  "author": "Troy Collinsworth",
+  "license": "MIT",
+  "name": "starter1",
+  "version": "1.0.0",
+  "description": "setup",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "per-env",
+    "start:development": "nodemon --exec babel-node index.js",
+    "start:production": "babel-node index.js",
+    "lint": "esw */*.js --ignore-pattern '**/__tests__' --ignore-pattern '**/migrations/**' --ignore-pattern '**/seeders/**' --ignore-pattern '**/public/api-docs' --ignore-path .gitignore --fix -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-preset-env": "^1.6.0",
+    "babel-register": "^6.24.1",
+    "eslint": "^4.2.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-watch": "^3.1.2"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.23.0",
+    "body-parser": "^1.17.2",
+    "compression": "^1.7.0",
+    "express": "^4.15.3",
+    "per-env": "^1.0.2",
+    "swagger-jsdoc": "^1.9.6"
+  }
+}

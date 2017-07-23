@@ -8,7 +8,15 @@ router.get('/', test)
 
 function test(req, res) {
   console.log('test ' + sessionMgr.get('reqId'))
-  res.json({})
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log('timedout reqId ' + sessionMgr.get('reqId'))
+      resolve({resp: 'fubar'})
+    }, 2000)
+  })
+  .then((resp) =>{
+    res.json({resp})
+  })
 }
 
 export default router

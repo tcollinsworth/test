@@ -1,7 +1,7 @@
 import swaggerJSDoc from 'swagger-jsdoc'
 import express from 'express'
 
-import { serviceName, serviceVersion, serviceDescription, serviceApis } from '../../constants'
+import { serviceName, serviceVersion, serviceDescription, serviceApis } from '../../config'
 
 const app = new express.Router()
 

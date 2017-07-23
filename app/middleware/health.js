@@ -1,4 +1,5 @@
 import express from 'express'
+import wrap from 'express-async-wrap'
 
 const router = new express.Router()
 
@@ -18,9 +19,11 @@ const router = new express.Router()
  *       500:
  *         description: not healthy
  */
-router.get('/health', (req, res) => {
+router.get('/health', wrap(getHealth))
+
+async function getHealth(req, res) {
   // TODO test all dependencies and report status
-  res.json({})
-})
+  res.json({healthy: true})
+}
 
 export default router

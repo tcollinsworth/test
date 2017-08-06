@@ -7,5 +7,5 @@ export const serviceName = 'Starter Service'
 export const serviceVersion = '1.0.0'
 export const serviceDescription = 'Example of a full featured node.js app with auth, db, etc.'
 export const serviceApis = [
-  './app/health/health.js',
+  './app/middleware/health.js',
 ]

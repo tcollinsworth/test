@@ -5,12 +5,13 @@ import compression from 'compression'
 import health from './middleware/health'
 import swagger from './middleware/swagger'
 
-import { sessionMiddleware } from './middleware/sessionMgr'
+import { clsMgr } from './middleware/cls-mgr'
 import testAPI from './middleware/test'
 
 import apiRouter from './api'
 
 const app = express()
+export default app
 
 app.set('json spaces', 2)
 
@@ -20,11 +21,9 @@ app.use(express.static(path.join(__dirname, '../public')))
 app.use(health)
 app.use(swagger)
 
-app.use(sessionMiddleware)
+app.use(clsMgr)
 // app.use(request)
 // app.use(auth)
 app.use('/v1', apiRouter)
 app.use('/test', testAPI)
 // app.use(error)
-
-export default app

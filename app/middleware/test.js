@@ -1,41 +1,47 @@
 import express from 'express'
 import wrap from 'express-async-wrap'
+import delay from 'delay'
 
-import * as sessionMgr from './sessionMgr'
+import * as clsMgr from './cls-mgr'
 
 const router = new express.Router()
+export default router
 
 router.get('/', wrap(test))
 
 async function test(req, res) {
-  console.log('test ' + sessionMgr.get('reqId'))
+  console.log(`test reqId at start ${clsMgr.get('reqId')} ${new Date().getTime()}`)
 
-  //demonstrates CLS works with async await 
+  //demonstrates CLS works with async await
   const reqId = await asyncTest()
-  console.log(`await reqId ${reqId}`)
+  console.log(`await reqId ${reqId} ${new Date().getTime()}`)
+
+  //demonstrates CLS works with promise
+  const result = await promiseTest()
+  console.log(`after execution reqId ${result} ${new Date().getTime()}`)
+
+  res.json({result})
+}
+
+async function promiseTest() {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      console.log('timedout reqId ' + sessionMgr.get('reqId'))
-      resolve({resp: 'fubar'})
+      console.log(`promise setTimeout reqId ${clsMgr.get('reqId')} ${new Date().getTime()}`)
+      resolve(clsMgr.get('reqId'))
     }, 2000)
-  })
-  .then((resp) => {
-    res.json({resp})
+    console.log('after promiseTest setTimeout')
   })
 }
 
 async function asyncTest() {
   return new Promise((resolve) => {
     setTimeout(() => {
-      console.log('asyncTest executed')
       resolve(getReqId())
     }, 3000)
+    console.log('after asyncTest setTimeout')
   })
 }
 
 function getReqId() {
-  console.log('getReqId executed')
-  return sessionMgr.get('reqId')
+  return `await asyncTest setTimeout reqId ${clsMgr.get('reqId')}`
 }
-
-export default router

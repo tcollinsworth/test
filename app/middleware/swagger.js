@@ -4,6 +4,7 @@ import express from 'express'
 import { serviceName, serviceVersion, serviceDescription, serviceApis } from '../../config'
 
 const app = new express.Router()
+export default app
 
 const options = {
   swaggerDefinition: {
@@ -24,5 +25,3 @@ app.get('/swagger.json', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.send(swaggerSpec)
 })
-
-export default app

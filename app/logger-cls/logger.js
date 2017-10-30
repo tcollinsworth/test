@@ -8,9 +8,24 @@ const defaultOpts = {
   level: 'info'
 }
 
+const loggerRegistry = {}
+let seq = 0
+
+export function getLoggersLevels() {
+  const loggers = []
+  Object.keys(loggerRegistry).forEach((key) => {
+    loggers.push({[key]: loggerRegistry[key].getLevel()})
+  })
+  return loggers
+}
+
 class Logger {
   constructor(name, options = defaultOpts, stream = process.stdout) {
-    this.name = name
+    if (!name) {
+      //TODO not console
+      console.log(new Error('Error unamed logger'))
+    }
+    this.name = name || 'unamed' + ++seq
     this.level = options.level || levels.info
     this.cls = null //TODO
     this.options = options
@@ -18,10 +33,22 @@ class Logger {
     this.baseSerializers = serializers.defaultBaseSerializers
     this.reqSerializers = serializers.defaultReqSerializers
     this.resSerializers = serializers.defaultResSerializers
+
+    if (typeof loggerRegistry[name] === 'undefined') {
+      loggerRegistry[name] = this
+    } else {
+      loggerRegistry[name + ++seq] = this
+      //TODO not console
+      console.log(new Error('Error logger name collision ' + name))
+    }
   }
 
   setLevel(level) {
     this.level = levels.getLevel(level)
+  }
+
+  getLevel() {
+    return this.level
   }
 
   info(...args) {

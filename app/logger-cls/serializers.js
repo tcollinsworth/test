@@ -2,13 +2,6 @@ import stringify from 'json-stringify-safe'
 import os from 'os'
 import uuidV4 from 'uuid/v4'
 
-//baseLog format
-//time, id, level, optMessage, error: {type, mesg, stack, otherProps(errorsRecursively)}, otherArgs, clsArgs
-//req format
-//baseLog AND host, pid, method, url, reqHeaders, connection.remoteAddress, connection.remotePort
-//res format
-//baseLog AND status, respTime, resHeaders, error
-
 export const defaultBaseSerializers = [
   getEpochTime,
   //getIsoTime,
@@ -17,8 +10,8 @@ export const defaultBaseSerializers = [
   getLoggerName,
   getPid,
   getHostname,
-  getArgs, //optional, includes message, error, other args, errors squirreled away for getErrors
-  getErrors //squirreled away by getArgs
+  getArgs, //optional, includes message, error, other args, errors are squirreled away for getErrors processing separately
+  getErrors //were squirreled away by getArgs
   //getClsArgs
 ]
 
@@ -72,27 +65,35 @@ export function getHostname(level, args, errors) {
 }
 
 export function getMethod(level, req) {
+  //TODO
 }
 
 export function getUrl(level, req) {
+  //TODO
 }
 
 export function getReqHeaders(level, req) {
+  //TODO
 }
 
 export function getConnRemoteAddress(level, req) {
+  //TODO
 }
 
 export function getConnRemotePort(level, req) {
+  //TODO
 }
 
 export function getResHeaders(level, res, error) {
+  //TODO
 }
 
 export function getStatus(level, res, error) {
+  //TODO
 }
 
 export function getRespTime(level, res, error) {
+  //TODO
 }
 
 export function getArgs(level, args, errors) {

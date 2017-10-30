@@ -26,9 +26,11 @@ test('constructor', t => {
   err.cause = new Error('cause')
   log.createLogger('error w/cause').info(err)
 
-  // let mySymbol = Symbol('foo')
-  // log.createLogger().info('test1', true, 1, {foo:'bar'}, null, undefined, Math.sin, mySymbol, ['a', 1], 'test2')
-  // log.createLogger().info(log.createLogger())
+  log.createLogger('all types').info('test1', true, 1, {foo:'bar'}, null, undefined, Math.sin, mySymbol, ['a', 1], 'test2')
+  log.createLogger('logger').info(log.createLogger('logger test'))
+
+  console.log(JSON.stringify(log.getLoggersLevels(), null, '  '))
+
   t.pass()
 })
 

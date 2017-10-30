@@ -1,7 +1,7 @@
 import stringify from 'json-stringify-safe'
 import flatstr from 'flatstr'
 
-import { fatal, error, warn, debug, info, trace } from './levels'
+import { fatal, error, warn, debug, info, trace, getLevel } from './levels'
 import * as serializers from './serializers'
 
 const defaultOpts = {
@@ -11,14 +11,6 @@ const defaultOpts = {
 const loggerRegistry = {}
 let seq = 0
 
-export function getLoggersLevels() {
-  const loggers = []
-  Object.keys(loggerRegistry).forEach((key) => {
-    loggers.push({[key]: loggerRegistry[key].getLevel()})
-  })
-  return loggers
-}
-
 class Logger {
   constructor(name, options = defaultOpts, stream = process.stdout) {
     if (!name) {
@@ -26,7 +18,7 @@ class Logger {
       console.log(new Error('Error unamed logger'))
     }
     this.name = name || 'unamed' + ++seq
-    this.level = options.level || levels.info
+    this.level = getLevel(options.level) || info //TODO will error if options not set right
     this.cls = null //TODO
     this.options = options
     this.stream = stream
@@ -34,6 +26,10 @@ class Logger {
     this.reqSerializers = serializers.defaultReqSerializers
     this.resSerializers = serializers.defaultResSerializers
 
+    this.registerLogger(name, this)
+  }
+
+  registerLogger(name, logger) {
     if (typeof loggerRegistry[name] === 'undefined') {
       loggerRegistry[name] = this
     } else {
@@ -44,7 +40,7 @@ class Logger {
   }
 
   setLevel(level) {
-    this.level = levels.getLevel(level)
+    this.level = getLevel(level)
   }
 
   getLevel() {
@@ -99,6 +95,18 @@ class Logger {
   resLog() {
 
   }
+}
+
+export function getLoggersLevels() {
+  const loggers = []
+  Object.keys(loggerRegistry).forEach((key) => {
+    loggers.push({[key]: loggerRegistry[key].getLevel()})
+  })
+  return loggers
+}
+
+export function setLoggerLevel(name, level) {
+  loggerRegistry[name].setLevel(level)
 }
 
 export function createLogger(options, stream) {

@@ -27,9 +27,11 @@ test('constructor', t => {
   log.createLogger('error w/cause').info(err)
 
   log.createLogger('all types').info('test1', true, 1, {foo:'bar'}, null, undefined, Math.sin, mySymbol, ['a', 1], 'test2')
-  log.createLogger('logger').info(log.createLogger('logger test'))
-
-  console.log(JSON.stringify(log.getLoggersLevels(), null, '  '))
+  const logger = log.createLogger('logger')
+  t.is('info', logger.getLevel().name)
+  logger.info(log.createLogger('logger test'))
+  log.setLoggerLevel('logger', 'fatal')
+  t.is('fatal', logger.getLevel().name)
 
   t.pass()
 })

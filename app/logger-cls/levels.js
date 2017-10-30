@@ -27,3 +27,22 @@ export const trace = {
   name: 'trace',
   value: 10
 }
+
+export function getLevel(level) {
+  switch (level) {
+    case 'fatal':
+      return fatal
+    case 'error':
+      return error
+    case 'warn':
+      return warn
+    case 'info':
+      return info
+    case 'debug':
+      return debug
+    case 'trace':
+      return trace
+    default:
+      throw new Error('unrecognized level ' + level)
+  }
+}

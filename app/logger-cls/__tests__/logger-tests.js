@@ -32,8 +32,19 @@ test('constructor', t => {
   logger.info(log.createLogger('logger test'))
   log.setLoggerLevel('logger', 'fatal')
   t.is('fatal', logger.getLevel().name)
-
-  t.pass()
+  logger.trace('test')
+  logger.debug('test')
+  logger.info('test')
+  logger.warn('test')
+  logger.error('test')
+  logger.fatal('test')
+  log.setLoggerLevel('logger', 'trace')
+  logger.trace('test')
+  logger.debug('test')
+  logger.info('test')
+  logger.warn('test')
+  logger.error('test')
+  logger.fatal('test')
 })
 
 test.skip('error', t => {

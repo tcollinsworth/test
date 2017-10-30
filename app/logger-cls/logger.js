@@ -47,9 +47,12 @@ class Logger {
     return this.level
   }
 
-  info(...args) {
-    this.baseLog(info, this.baseSerializers, args)
-  }
+  fatal(...args) {this.baseLog(fatal, this.baseSerializers, args)}
+  error(...args) {this.baseLog(error, this.baseSerializers, args)}
+  warn(...args) {this.baseLog(warn, this.baseSerializers, args)}
+  debug(...args) {this.baseLog(debug, this.baseSerializers, args)}
+  info(...args) {this.baseLog(info, this.baseSerializers, args)}
+  trace(...args) {this.baseLog(trace, this.baseSerializers, args)}
 
   baseLog(level, serializers, args) {
     if (level.value < this.level.value) {

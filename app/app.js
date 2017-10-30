@@ -22,7 +22,6 @@ app.use(health)
 app.use(swagger)
 
 app.use(clsMgr)
-// app.use(request)
 // app.use(auth)
 app.use('/v1', apiRouter)
 app.use('/test', testAPI)

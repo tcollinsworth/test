@@ -11,6 +11,9 @@
     "start:development": "nodemon --exec babel-node index.js",
     "start:production": "babel-node index.js",
     "debug": "nodemon --exec babel-node --inspect index.js",
+    "watchUnit": "ava --fail-fast -v **/__tests__/**/*test*.js --watch",
+    "ava": "ava",
+    "coverage": "nyc ava",
     "lint": "esw */*.js --ignore-pattern '**/__tests__' --ignore-pattern '**/migrations/**' --ignore-pattern '**/seeders/**' --ignore-pattern '**/public/api-docs' --ignore-path .gitignore --fix -w"
   },
   "repository": {
@@ -18,14 +21,18 @@
     "url": ""
   },
   "devDependencies": {
+    "ava": "^0.23.0",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-preset-env": "^1.6.0",
     "babel-register": "^6.24.1",
+    "byline": "^5.0.0",
     "eslint": "^4.2.0",
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.7.0",
-    "eslint-watch": "^3.1.2"
+    "eslint-watch": "^3.1.2",
+    "ignore-styles": "^5.0.1",
+    "nyc": "^11.2.1"
   },
   "dependencies": {
     "babel-polyfill": "^6.23.0",
@@ -35,8 +42,26 @@
     "delay": "^2.0.0",
     "express": "^4.15.3",
     "express-async-wrap": "^1.0.0",
+    "flatstr": "^1.0.5",
+    "json-stringify-safe": "^5.0.1",
+    "lodash": "^4.17.4",
     "per-env": "^1.0.2",
+    "pino": "^4.8.1",
     "swagger-jsdoc": "^1.9.6",
+    "uuid": "^3.1.0",
     "uuidv4": "^0.5.0"
+  },
+  "ava": {
+    "files": [
+      "**/__tests__/**/*test*.js"
+    ],
+    "failFast": true,
+    "verbose": true,
+    "require": [
+      "ignore-styles",
+      "babel-register",
+      "babel-polyfill"
+    ],
+    "babel": "inherit"
   }
 }

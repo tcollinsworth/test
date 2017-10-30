@@ -8,7 +8,7 @@ import uuidV4 from 'uuidv4'
 //https://datahero.com/blog/2014/05/22/node-js-preserving-data-across-async-callbacks/
 //http://asim-malik.com/the-perils-of-node-continuation-local-storage/
 //https://github.com/othiym23/node-continuation-local-storage/issues/98
-//https://github.com/jeff-lewis/cls-hooked
+//https://github.com/jeff-lewis/cls-hooked async_hooks 8.2.1 2017-07-20
 const requestNS = createNamespace('requestNamespace')
 
 export function clsMgr(req, res, next) {

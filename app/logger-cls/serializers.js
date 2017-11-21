@@ -2,32 +2,18 @@ import stringify from 'json-stringify-safe'
 import os from 'os'
 import uuidV4 from 'uuid/v4'
 
-export const defaultBaseSerializers = [
+// serializer functions that take: level, args, errors
+export const defaultSerializers = [
   getEpochTime,
-  //getIsoTime,
+  getIsoDateTime,
   getId,
   getLevel,
   getLoggerName,
   getPid,
   getHostname,
-  getArgs, //optional, includes message, error, other args, errors are squirreled away for getErrors processing separately
-  getErrors //were squirreled away by getArgs
+  getArgs, //includes log args, all errors are squirreled away for inclusion by getErrors
+  getErrors //squirreled away by getArgs
   //getClsArgs
-]
-
-export const defaultReqSerializers = [
-  getHostname,
-  getMethod,
-  getUrl,
-  getReqHeaders,
-  getConnRemoteAddress,
-  getConnRemotePort
-]
-
-export const defaultResSerializers = [
-  getResHeaders,
-  getStatus,
-  getRespTime,
 ]
 
 export function getLoggerName(level, args, errors) {
@@ -38,8 +24,8 @@ export function getEpochTime(level, args, errors) {
   return '"time":"' + Date.now() + '"'
 }
 
-export function getIsoTime(level, args, errors) {
-  return '"time":"' + (new Date()).toISOString() + '"'
+export function getIsoDateTime(level, args, errors) {
+  return '"date":"' + (new Date()).toISOString() + '"'
 }
 
 export function getId(level, args, errors) {
@@ -62,38 +48,6 @@ export function getPid(level, args, errors) {
 
 export function getHostname(level, args, errors) {
   return '"host":"' + os.hostname() + '"'
-}
-
-export function getMethod(level, req) {
-  //TODO
-}
-
-export function getUrl(level, req) {
-  //TODO
-}
-
-export function getReqHeaders(level, req) {
-  //TODO
-}
-
-export function getConnRemoteAddress(level, req) {
-  //TODO
-}
-
-export function getConnRemotePort(level, req) {
-  //TODO
-}
-
-export function getResHeaders(level, res, error) {
-  //TODO
-}
-
-export function getStatus(level, res, error) {
-  //TODO
-}
-
-export function getRespTime(level, res, error) {
-  //TODO
 }
 
 export function getArgs(level, args, errors) {
@@ -152,7 +106,7 @@ export function addError(err) {
         //add errors recursively as cause if any properties are errors
         mesg += delimiter + '"cause":' + addError(err[key])
       } else {
-        mesg += delimiter + '"' + key + '":"' + err[key] + '"'
+        mesg += delimiter + '"' + key + '":' + handleArgByType(err[key])
       }
     }
   })
@@ -166,11 +120,18 @@ export function handleArgByType(arg, errors) {
     errors.push(arg)
     return null
   }
-  //JSON types
+
   switch (typeof arg) {
     case 'string':
       return stringify(arg)
     case 'number':
+      if (arg === Number.POSITIVE_INFINITY) {
+        return '"Infinity"'
+      } else if (arg === Number.NEGATIVE_INFINITY) {
+        return '"-Infinity"'
+      } else if (Number.isNaN(arg)) {
+        return '"NaN"'
+      }
       return arg
     case 'boolean':
       return arg
@@ -185,7 +146,7 @@ export function handleArgByType(arg, errors) {
     case 'symbol': //new ES6
       return '"' + arg.toString() + '"'
     case 'function':
-      return '"' + arg + '"'
+      return '"[Function]"'
     default:
       return '"unsupported type ' + typeof arg + '"'
   }

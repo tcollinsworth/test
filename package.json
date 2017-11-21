@@ -10,6 +10,7 @@
     "start": "per-env",
     "start:development": "nodemon --exec babel-node index.js",
     "start:production": "babel-node index.js",
+    "start2": "babel-node index2.js",
     "debug": "nodemon --exec babel-node --inspect index.js",
     "watchUnit": "ava --fail-fast -v **/__tests__/**/*test*.js --watch",
     "ava": "ava",

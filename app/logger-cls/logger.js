@@ -1,5 +1,6 @@
 import stringify from 'json-stringify-safe'
 import flatstr from 'flatstr'
+import fs from 'fs'
 
 import { fatal, error, warn, debug, info, trace, getLevel } from './levels'
 import * as serializers from './serializers'
@@ -9,33 +10,48 @@ const defaultOpts = {
 }
 
 const loggerRegistry = {}
+//sequence is appended if there are name conflicts
 let seq = 0
 
 class Logger {
   constructor(name, options = defaultOpts, stream = process.stdout) {
     if (!name) {
       //TODO not console
-      console.log(new Error('Error unamed logger'))
+      console.log(new Error('Error unnamed logger'))
     }
-    this.name = name || 'unamed' + ++seq
+    this.name = name || 'unnamed-' + ++seq
     this.level = getLevel(options.level) || info //TODO will error if options not set right
     this.cls = null //TODO
     this.options = options
     this.stream = stream
-    this.baseSerializers = serializers.defaultBaseSerializers
-    this.reqSerializers = serializers.defaultReqSerializers
-    this.resSerializers = serializers.defaultResSerializers
+    this.serializers = serializers.defaultSerializers
 
     this.registerLogger(name, this)
   }
 
+  // streamStatus() {
+  //   console.log(stringify(JSON.parse(stringify(this.stream)), null, '  '))
+  // }
+
+  // hasFileDecriptor() {
+  //   return !!(typeof this.stream._handle !== 'undefined' && typeof this.stream._handle.fd !== 'undefined' && this.stream._handle.fd)
+  //             || (typeof this.stream.fd !== 'undefined' && this.stream.fd)
+  // }
+
+  // syncWrite(buf = '\n') {
+  //   const fd = (this.stream.fd) ? this.stream.fd : this.stream._handle.fd
+  //   fs.writeSync(fd, buf)
+  // }
+
   registerLogger(name, logger) {
+    //TODO don't think this is correct
     if (typeof loggerRegistry[name] === 'undefined') {
       loggerRegistry[name] = this
     } else {
-      loggerRegistry[name + ++seq] = this
+      const loggerName = `${name}-${++seq}`
+      loggerRegistry[loggerName] = this
       //TODO not console
-      console.log(new Error('Error logger name collision ' + name))
+      console.log(new Error(`Error logger name collision ${loggerName}`))
     }
   }
 
@@ -47,12 +63,12 @@ class Logger {
     return this.level
   }
 
-  fatal(...args) {this.baseLog(fatal, this.baseSerializers, args)}
-  error(...args) {this.baseLog(error, this.baseSerializers, args)}
-  warn(...args) {this.baseLog(warn, this.baseSerializers, args)}
-  debug(...args) {this.baseLog(debug, this.baseSerializers, args)}
-  info(...args) {this.baseLog(info, this.baseSerializers, args)}
-  trace(...args) {this.baseLog(trace, this.baseSerializers, args)}
+  fatal(...args) {this.baseLog(fatal, this.serializers, args)}
+  error(...args) {this.baseLog(error, this.serializers, args)}
+  warn(...args) {this.baseLog(warn, this.serializers, args)}
+  debug(...args) {this.baseLog(debug, this.serializers, args)}
+  info(...args) {this.baseLog(info, this.serializers, args)}
+  trace(...args) {this.baseLog(trace, this.serializers, args)}
 
   baseLog(level, serializers, args) {
     if (level.value < this.level.value) {
@@ -77,7 +93,12 @@ class Logger {
     mesg += '}'
     //flatstr(mesg)
     // console.log(flatstr(mesg))
-    console.log(JSON.stringify(JSON.parse(flatstr(mesg)), null, '  '))
+    //TODO write to stream, default stream is console, but can be set to readable buffer for testing
+    //TODO something more efficient than parse/stringify
+    //console.log(JSON.stringify(JSON.parse(flatstr(mesg)), null, '  '))
+    //console.log(flatstr(mesg) + '\r\n')
+    const output = flatstr(mesg + '\n')  //JSON.stringify(JSON.parse(flatstr(mesg)), null, '  ')
+    this.stream.write(output)
   }
 
   messageSerializingError(err, serializer) {
@@ -90,28 +111,24 @@ class Logger {
     const mesg = stringify(flatstr(mesgObj))
     this.stream.write(mesg + '\n')
   }
-
-  reqLog() {
-
-  }
-
-  resLog() {
-
-  }
 }
 
 export function getLoggersLevels() {
-  const loggers = []
+  const loggersLevels = []
   Object.keys(loggerRegistry).forEach((key) => {
-    loggers.push({[key]: loggerRegistry[key].getLevel()})
+    loggersLevels.push({[key]: loggerRegistry[key].getLevel()})
   })
-  return loggers
+  return loggersLevels
 }
 
 export function setLoggerLevel(name, level) {
   loggerRegistry[name].setLevel(level)
 }
 
-export function createLogger(options, stream) {
-  return new Logger(options, stream)
+export function createLogger(name, options, stream) {
+  return new Logger(name, options, stream)
+}
+
+export function removeLogger(name) {
+  delete loggerRegistry[name]
 }

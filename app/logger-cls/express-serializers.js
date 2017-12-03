@@ -32,6 +32,10 @@ export function getEpochTime(level, args, errors) {
   return '"time":"' + Date.now() + '"'
 }
 
+export function getIsoDateTime(level, args, errors) {
+  return '"date":"' + (new Date()).toISOString() + '"'
+}
+
 export function getId(level, args, errors) {
   let id
   if (this.cls) {

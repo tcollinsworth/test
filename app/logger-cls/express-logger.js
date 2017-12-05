@@ -4,58 +4,46 @@ import * as expressSerializers from './express-serializers'
 import * as clsMgr from '../middleware/cls-mgr'
 
 //app.use(clsMgr) //TODO remove or set into expressLogger and axios
-
-const defaultOpts = {
-  level: 'info'
-}
-
-export function expressLogger(name, options = defaultOpts, stream) {
-  const logger = new log.createLogger(name, options, stream)
-  const expressLogger = new ExpressLogger(logger)
-  return (req, res, next) => {
-    res.start = Date.now()
-    expressLogger.handleRequest(req, res, next)
-  }
-}
-
 //TODO method to add log management API to express
 //TODO log route filters
+//TODO setName, level, logger.options, reqSerializers, resSerializers
 
-// this.reqSerializers = expressSerializers.defaultReqSerializers
-// this.resSerializers = expressSerializers.defaultResSerializers
+export var logger = log.createLogger('express', {level: 'info'})
+export var reqSerializers = expressSerializers.defaultReqSerializers
+export var resSerializers = expressSerializers.defaultResSerializers
 
-class ExpressLogger {
-  constructor(logger, reqSerializers, resSerializers) {
-    this.logger = logger
-    this.reqSerializers = reqSerializers
-    this.resSerializers = resSerializers
-  }
+function requestHandler(req, res, next) {
+  res.start = Date.now()
+  handleRequest(req, res, next)
+}
 
-  handleRequest(req, res, next) {
-    //TODO start timer
-    //TODO has CLS
-    //TODO saves data in cls
-    //TODO log request info and cls data
-    //TODO register resp and error handler
-    this.logger.info('request')
-    res.on('finish', handleResponse)
-    res.on('error', handleError)
-    // throw new Error('test')
-    next()
-  }
+export default requestHandler
+
+function handleRequest(req, res, next) {
+  //TODO start timer
+  //TODO has CLS
+  //TODO saves data in cls
+  //TODO log request info and cls data
+  //TODO register resp and error handler
+  logger.baseLog(info, reqSerializers, req)
+  res.on('finish', handleResponse)
+  res.on('error', handleError)
+  // throw new Error('test')
+  next()
 }
 
 function handleResponse() {
   //this = res
-  console.log('resp reqId', clsMgr.get('reqId'))
-  console.log(Date.now() - this.start + ' ms')
+  logger.baseLog(info, resSerializers, this)
   removeListeners.bind(this)
 }
 
 function handleError(err) {
+  console.log('Error', err)
+
   //this = res
+  logger.baseLog(info, resSerializers, this, err)
   removeListeners.bind(this)
-  console.log(Error)
   //TODO what is correct action here next, return, throw
 }
 

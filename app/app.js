@@ -10,7 +10,7 @@ import testAPI from './middleware/test'
 
 import apiRouter from './api'
 
-import { expressLogger } from './logger-cls/express-logger'
+import expressLogger from './logger-cls/express-logger'
 //TODO setup header copy to axios
 //TODO setup req log route filtering
 
@@ -21,7 +21,7 @@ app.set('json spaces', 2)
 
 app.use(clsMgr) //TODO set into expressLogger and axios
 
-app.use(expressLogger('request-logger'))
+app.use(expressLogger)
 
 app.use(compression())
 app.use(express.static(path.join(__dirname, '../public')))

@@ -1,5 +1,8 @@
+import stringify from 'json-stringify-safe'
 import os from 'os'
 import uuidV4 from 'uuid/v4'
+import * as clsMgr from '../middleware/cls-mgr'
+import { addError } from './serializers'
 
 // serializer functions that take: level, req
 export const defaultReqSerializers = [
@@ -7,21 +10,22 @@ export const defaultReqSerializers = [
   getIsoDateTime,
   getId,
   getHostname,
+  getProtocol,
   getMethod,
   getUrl,
   getReqHeaders,
   getConnRemoteAddress,
-  getConnRemotePort
 ]
 
-// serializer functions that take: level, res, error
+// serializer functions that take: level, res, error (opt)
 export const defaultResSerializers = [
   getEpochTime,
   getIsoDateTime,
   getId,
   getResHeaders,
-  getStatus,
-  getRespTime,
+  getResStatus,
+  getResError,
+  getResTime,
 ]
 
 export function getLoggerName(level, args, errors) {
@@ -37,9 +41,9 @@ export function getIsoDateTime(level, args, errors) {
 }
 
 export function getId(level, args, errors) {
-  let id
-  if (this.cls) {
-    //TODO get from cls x-request-id
+  let id = clsMgr.get('reqId')
+  if (id) {
+    //no-op
   } else {
     id = uuidV4()
   }
@@ -50,34 +54,42 @@ export function getHostname(level, args, errors) {
   return '"host":"' + os.hostname() + '"'
 }
 
+export function getProtocol(level, req) {
+  return '"protocol":""' + req.protocol + '"'
+}
+
 export function getMethod(level, req) {
-  //TODO
+  return '"method":""' + req.method + '"'
 }
 
 export function getUrl(level, req) {
-  //TODO
+  return '"url":"' + req.originalUrl + '"'
 }
 
 export function getReqHeaders(level, req) {
-  //TODO
+  return '"headers":' + JSON.stringify(req.headers)
 }
 
 export function getConnRemoteAddress(level, req) {
-  //TODO
-}
-
-export function getConnRemotePort(level, req) {
-  //TODO
+  return '"remoteIp":"' + req.ip + '"'
 }
 
 export function getResHeaders(level, res, error) {
-  //TODO
+  return '"headers":' + JSON.stringify(res.header()._headers)
 }
 
-export function getStatus(level, res, error) {
-  //TODO
+export function getResStatus(level, res, error) {
+  return '"status":' + res.statusCode
 }
 
-export function getRespTime(level, res, error) {
-  //TODO
+export function getResError(level, res, error) {
+  console.log('getResError', error)
+  if (error && error.length > 0) {
+    //chain of errors and their properties
+    return '"error":' + addError(error)
+  }
+}
+
+export function getResTime(level, res, error) {
+  return '"responseTime":"' + (Date.now() - res.start) + ' ms"'
 }

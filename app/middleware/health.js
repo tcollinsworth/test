@@ -23,6 +23,7 @@ router.get('/health', wrap(getHealth))
 
 async function getHealth(req, res) {
   // TODO test all dependencies and report status
+  throw new Error('test')
   res.json({healthy: true})
 }
 

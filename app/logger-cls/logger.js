@@ -26,7 +26,7 @@ class Logger {
     this.stream = stream
     this.serializers = serializers.defaultSerializers
 
-    this.registerLogger(name, this)
+    registerLogger(name, this)
   }
 
   // streamStatus() {
@@ -42,18 +42,6 @@ class Logger {
   //   const fd = (this.stream.fd) ? this.stream.fd : this.stream._handle.fd
   //   fs.writeSync(fd, buf)
   // }
-
-  registerLogger(name, logger) {
-    //TODO don't think this is correct
-    if (typeof loggerRegistry[name] === 'undefined') {
-      loggerRegistry[name] = this
-    } else {
-      const loggerName = `${name}-${++seq}`
-      loggerRegistry[loggerName] = this
-      //TODO not console
-      console.log(new Error(`Error logger name collision ${loggerName}`))
-    }
-  }
 
   setLevel(level) {
     this.level = getLevel(level)
@@ -110,6 +98,18 @@ class Logger {
     }
     const mesg = stringify(flatstr(mesgObj))
     this.stream.write(mesg + '\n')
+  }
+}
+
+export function registerLogger(name, logger) {
+  //TODO don't think this is correct
+  if (typeof loggerRegistry[name] === 'undefined') {
+    loggerRegistry[name] = logger
+  } else {
+    const loggerName = `${name}-${++seq}`
+    loggerRegistry[loggerName] = logger
+    //TODO not console
+    console.log(new Error(`Error logger name collision ${loggerName}`))
   }
 }
 

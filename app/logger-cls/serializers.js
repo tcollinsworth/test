@@ -2,6 +2,8 @@ import stringify from 'json-stringify-safe'
 import os from 'os'
 import uuidV4 from 'uuid/v4'
 
+import * as clsMgr from '../middleware/cls-mgr'
+
 // serializer functions that take: level, args, errors
 export const defaultSerializers = [
   getEpochTime,
@@ -29,9 +31,9 @@ export function getIsoDateTime(level, args, errors) {
 }
 
 export function getId(level, args, errors) {
-  let id
-  if (this.cls) {
-    //TODO get from cls x-request-id
+  let id = clsMgr.get('reqId')
+  if (id) {
+    //no-op
   } else {
     id = uuidV4()
   }

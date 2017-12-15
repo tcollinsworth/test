@@ -25,7 +25,7 @@ function handleRequest(req, res, next) {
   //TODO saves data in cls
   //TODO log request info and cls data
   //TODO register resp and error handler
-  logger.baseLog(info, reqSerializers, req)
+  logger.logger(info, reqSerializers, req)
   res.on('finish', handleResponse)
   res.on('error', handleError)
   // throw new Error('test')
@@ -33,16 +33,17 @@ function handleRequest(req, res, next) {
 }
 
 function handleResponse() {
+  //TODO FIXME detect and report error on res logging
   //this = res
-  logger.baseLog(info, resSerializers, this)
+  logger.logger(info, resSerializers, this)
   removeListeners.bind(this)
 }
 
 function handleError(err) {
-  console.log('Error', err)
+  console.log('handleError', err)
 
   //this = res
-  logger.baseLog(info, resSerializers, this, err)
+  logger.logger(info, resSerializers, this, err)
   removeListeners.bind(this)
   //TODO what is correct action here next, return, throw
 }
@@ -51,52 +52,3 @@ function removeListeners() {
   this.removeListener('finish', handleResponse)
   this.removeListener('error', handleError)
 }
-
-/*
-Object.key(res)
-
-[ 'domain',
-  '_events',
-  '_eventsCount',
-  '_maxListeners',
-  'output',
-  'outputEncodings',
-  'outputCallbacks',
-  'outputSize',
-  'writable',
-  '_last',
-  'upgrading',
-  'chunkedEncoding',
-  'shouldKeepAlive',
-  'useChunkedEncodingByDefault',
-  'sendDate',
-  '_removedConnection',
-  '_removedContLen',
-  '_removedTE',
-  '_contentLength',
-  '_hasBody',
-  '_trailer',
-  'finished',
-  '_headerSent',
-  'socket',
-  'connection',
-  '_header',
-  '_onPendingData',
-  '_sent100',
-  '_expect_continue',
-  'req',
-  'locals',
-  'flush',
-  'write',
-  'end',
-  'on',
-  'writeHead',
-  'wrap@before',
-  'addListener',
-  'emit',
-  '__unwrap',
-  '__wrapped',
-  'statusCode',
-  'statusMessage',
-  'removeListener' ]
-  */

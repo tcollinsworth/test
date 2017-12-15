@@ -15,6 +15,7 @@ export const defaultReqSerializers = [
   getUrl,
   getReqHeaders,
   getConnRemoteAddress,
+  getConnRemotePort,
 ]
 
 // serializer functions that take: level, res, error (opt)
@@ -47,7 +48,7 @@ export function getId(level, args, errors) {
   } else {
     id = uuidV4()
   }
-  return '"id":"' + id + '"'
+  return '"x-request-id":"' + id + '"'
 }
 
 export function getHostname(level, args, errors) {
@@ -74,6 +75,10 @@ export function getConnRemoteAddress(level, req) {
   return '"remoteIp":"' + req.ip + '"'
 }
 
+export function getConnRemotePort(level, req) {
+  return '"remotePort":' + req.connection.remotePort
+}
+
 export function getResHeaders(level, res, error) {
   return '"headers":' + JSON.stringify(res.header()._headers)
 }
@@ -83,6 +88,9 @@ export function getResStatus(level, res, error) {
 }
 
 export function getResError(level, res, error) {
+  //TODO FIXME below not logging what expected
+  console.log('getResError res', JSON.stringify(res, null, '  '))
+  //TODO FIXME, not reporting error in response logging
   console.log('getResError', error)
   if (error && error.length > 0) {
     //chain of errors and their properties

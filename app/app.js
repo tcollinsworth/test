@@ -12,7 +12,8 @@ import apiRouter from './api'
 
 import expressLogger from './logger-cls/express-logger'
 //TODO setup header copy to axios
-//TODO setup req log route filtering
+//TODO setup req log route filtering API
+//TODO setup logger config API
 
 const app = express()
 export default app
@@ -29,7 +30,13 @@ app.use(express.static(path.join(__dirname, '../public')))
 app.use(health)
 app.use(swagger)
 
-// app.use(auth)
+// app.use(auth) //TODO for auth routes, proxy through auth method
 app.use('/v1', apiRouter)
 app.use('/test', testAPI)
-// app.use(error)
+
+//TODO central error handlers for each error type, last for any uncaught
+app.use((err, req, res, next) => {
+  console.log('express error handler', err)
+  //TODO handle or next(err)
+  res.send('Error ' + err.message)
+})

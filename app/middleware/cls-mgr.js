@@ -1,6 +1,5 @@
 import express from 'express'
 
-//CLS does not currently work with async / await
 import { createNamespace } from 'continuation-local-storage'
 
 import uuidV4 from 'uuidv4'

@@ -5,7 +5,7 @@ import compression from 'compression'
 import health from './middleware/health'
 import swagger from './middleware/swagger'
 
-import { clsMgr } from './middleware/cls-mgr'
+import { clsMgr, set as clsSet } from './middleware/cls-mgr'
 import testAPI from './middleware/test'
 
 import apiRouter from './api'
@@ -38,5 +38,6 @@ app.use('/test', testAPI)
 app.use((err, req, res, next) => {
   console.log('express error handler', err)
   //TODO handle or next(err)
+  clsSet('reqError', err)
   res.send('Error ' + err.message)
 })

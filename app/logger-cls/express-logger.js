@@ -27,7 +27,6 @@ function handleRequest(req, res, next) {
   //TODO register resp and error handler
   logger.logger(info, reqSerializers, req)
   res.on('finish', handleResponse)
-  res.on('error', handleError)
   // throw new Error('test')
   next()
 }
@@ -39,16 +38,6 @@ function handleResponse() {
   removeListeners.bind(this)
 }
 
-function handleError(err) {
-  console.log('handleError', err)
-
-  //this = res
-  logger.logger(info, resSerializers, this, err)
-  removeListeners.bind(this)
-  //TODO what is correct action here next, return, throw
-}
-
 function removeListeners() {
   this.removeListener('finish', handleResponse)
-  this.removeListener('error', handleError)
 }

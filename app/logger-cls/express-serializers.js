@@ -6,6 +6,7 @@ import { addError } from './serializers'
 
 // serializer functions that take: level, req
 export const defaultReqSerializers = [
+  //getLoggerName,
   getEpochTime,
   getIsoDateTime,
   getId,
@@ -25,7 +26,7 @@ export const defaultResSerializers = [
   getId,
   getResHeaders,
   getResStatus,
-  getResError,
+  getReqError,
   getResTime,
 ]
 
@@ -87,11 +88,14 @@ export function getResStatus(level, res, error) {
   return '"status":' + res.statusCode
 }
 
-export function getResError(level, res, error) {
+export function getReqError(level, res, error) {
   //TODO FIXME below not logging what expected
-  console.log('getResError res', JSON.stringify(res, null, '  '))
+  // no error console.log('getReqError res', stringify(res, null, '  '))
   //TODO FIXME, not reporting error in response logging
-  console.log('getResError', error)
+  if (typeof clsMgr.get('reqError') !== 'undefined') {
+    console.log('clsMgr.get(\'reqError\')', clsMgr.get('reqError'))
+    console.log('getReqError', error)
+  }
   if (error && error.length > 0) {
     //chain of errors and their properties
     return '"error":' + addError(error)
